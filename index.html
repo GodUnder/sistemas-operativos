@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proyecto Final - Sistemas Operativos</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; color: #333; }
+    header, footer { background: #2c3e50; color: white; padding: 20px 10px; text-align: center; }
+    nav { background: #34495e; padding: 10px; text-align: center; }
+    nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: bold; }
+    section { background: white; margin: 20px; padding: 20px; border-radius: 10px; }
+    code { background-color: #eee; padding: 10px; display: block; white-space: pre-wrap; border-left: 4px solid #3498db; }
+    iframe { margin: 10px 0; display: block; }
+    img { margin: 10px 0; display: block; border-radius: 6px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Proyecto Final - Sistemas Operativos</h1>
+    <p>Instalación, configuración y automatización con Linux, Docker y Kubernetes</p>
+  </header>
+
+  <nav>
+    <a href="#portada">Portada</a>
+    <a href="#actividades">Actividades</a>
+    <a href="#scripts">Scripts</a>
+    <a href="#docker">Docker y Kubernetes</a>
+    <a href="#presentacion">Presentación</a>
+  </nav>
+
+  <section id="portada">
+    <h2>Portada</h2>
+    <p>Este sitio documenta el desarrollo del proyecto final de la asignatura de Sistemas Operativos. Nuestro objetivo fue profundizar en el manejo de sistemas Linux mediante su instalación en distintos entornos, el uso de herramientas de automatización como Bash, y la gestión de contenedores con Docker y Kubernetes.</p>
+  </section>
+
+  <section id="actividades">
+    <h2>Actividades Realizadas</h2>
+    <ul>
+      <li><strong>Instalación Gráfica</strong></li>
+      <li><strong>Instalación en Consola</strong></li>
+      <li><strong>Instalación de editores</strong></li>
+      <li><strong>Script gráfico y en consola</strong></li>
+      <li><strong>Docker: instalación, imagen y contenedor</strong></li>
+      <li><strong>Docker Hub: publicación</strong></li>
+      <li><strong>Kubernetes: instalación y ejecución de pod y deployment</strong></li>
+    </ul>
+  </section>
+
+  <section id="scripts">
+    <h2>Scripts de Automatización</h2>
+
+    <h3>Script en entorno gráfico (Zenity)</h3>
+    <code>
+zenity --question --title="Limpieza del sistema" --text="¿Quieres limpiar los archivos temporales y la papelera?"
+
+if [ $? -eq 0 ]; then
+  rm -rf /tmp/* ~/.cache/*
+  rm -rf ~/.local/share/Trash/files/* ~/.local/share/Trash/info/*
+  zenity --info --title="Limpieza realizada" --text="Los archivos temporales han sido eliminados"
+else
+  zenity --warning --title="Cancelado"
+fi
+    </code>
+    <p>Este script utiliza Zenity para mostrar cuadros de diálogo gráficos al usuario. Realiza la limpieza de archivos temporales si el usuario acepta la acción.</p>
+    <img src="zenity-script.png" alt="Script gráfico con Zenity" width="600">
+
+    <h3>Script en consola</h3>
+    <code>
+#!/bin/bash
+rm -rf /tmp/
+rm -rf ~/.local/share/Trash/files/*
+rm -rf ~/.cache/*
+echo "Limpieza realizada."
+    </code>
+    <p>Este script realiza exactamente la misma limpieza pero ejecutado desde la terminal sin entorno gráfico.</p>
+    <img src="bash-script-console.png" alt="Script consola en Nano" width="600">
+  </section>
+
+  <section id="docker">
+    <h2>Docker y Kubernetes</h2>
+
+    <h3>Dockerfile</h3>
+    <code>
+FROM ubuntu:22.04
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y \
+    wget curl git nano vim openjdk-17-jdk \
+    libgtk-3-0 libnss3 libxss1 libasound2 libxtst6 libxrandr2 libgl1-mesa-glx x11-apps \
+    software-properties-common
+RUN wget -O atom.deb https://atom.io/download/deb && \
+    dpkg -i atom.deb || apt-get install -f -y && \
+    rm atom.deb
+RUN mkdir -p /opt/eclipse && \
+    curl -L "https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/2023-12/R/eclipse-java-2023-12-R-linux-gtk-x86_64.tar.gz&amp;mirror_id=1" -o /tmp/eclipse.tar.gz && \
+    tar -xzf /tmp/eclipse.tar.gz -C /opt/eclipse --strip-components=1 && \
+    rm /tmp/eclipse.tar.gz && \
+    ln -s /opt/eclipse/eclipse /usr/bin/eclipse
+CMD ["bash"]
+    </code>
+
+    <h3>Pod Kubernetes</h3>
+    <code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu-linux-pod
+spec:
+  containers:
+  - name: ubuntu-container
+    image: quintanasebastian/docker-dev-copia:latest
+    command: ["sleep", "infinity"]
+    </code>
+
+    <h3>Deployment Nginx</h3>
+    <code>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+    </code>
+  </section>
+
+  <section id="presentacion">
+    <h2>Presentación Final - Videos del Proyecto</h2>
+    <p>Estos son los videos que documentan las diferentes etapas del proyecto:</p>
+
+    <h3>1. Instalación en entorno gráfico</h3>
+    <iframe src="https://drive.google.com/file/d/1NnRcODT4-GhHarozqajGkfsfzwcq0CvF/preview" width="640" height="360" allow="autoplay"></iframe>
+
+    <h3>2. Instalación de navegadores</h3>
+    <iframe src="https://drive.google.com/file/d/1KO71UyQoTVqyyrF8y35AYODw6RYS2iUs/preview" width="640" height="360" allow="autoplay"></iframe>
+
+    <h3>3. Instalación de Visual Studio</h3>
+    <iframe src="https://drive.google.com/file/d/1cagKPfvJlVWJ8q0YdAi3eHPiHO6NcxGN/preview" width="640" height="360" allow="autoplay"></iframe>
+
+    <h3>4. Instalación de PyCharm</h3>
+    <iframe src="https://drive.google.com/file/d/17fDdsI_ZFUUMDZxFdsxBmlfWa8gV4yLb/preview" width="640" height="360" allow="autoplay"></iframe>
+
+    <h3>5. Instalación en entorno de consola</h3>
+    <iframe src="https://drive.google.com/file/d/1tDb5HWh72Ie6KXhsNXruaDxm4Bfs3dLA/preview" width="640" height="360" allow="autoplay"></iframe>
+
+    <h3>6. Instalación de herramientas de Fedora</h3>
+    <iframe src="https://drive.google.com/file/d/1eQ-zRvAF9ex6Konr7qlxZTN8ukYX5drq/preview" width="640" height="360" allow="autoplay"></iframe>
+
+    <h3>7. Instalación de editores de texto</h3>
+    <iframe src="https://drive.google.com/file/d/1QjzHRIGsnJnciQXdBoFFc8dzsiaVHmdA/preview" width="640" height="360" allow="autoplay"></iframe>
+
+    <h3>8. Script en entorno grafico</h3>
+    <iframe src="https://drive.google.com/file/d/1zG02-9NuyP-ODXBdFJ7qpYN0YqgE7ncy/preview" width="640" height="360" allow="autoplay"></iframe>
+
+    <h3>9.  Script en entorno de consola</h3>
+    <iframe src="https://drive.google.com/file/d/1--77_lB6n4_e5_gHUF0Y1j1UXgj___e9/preview" width="640" height="360" allow="autoplay"></iframe>
+
+    <h3>10. Docker</h3>
+    <iframe src="https://drive.google.com/file/d/176Ikb384iJIwbjsA4K-KTqmYtKAWzYuy/preview" width="640" height="360" allow="autoplay"></iframe>
+  </section>
+
+  <footer>
+    <p>Sebastian Quintana Bonilla</p>
+    <p>Brayan Herney Zuluaga Zuñiga</p>
+  </footer>
+
+</body>
+</html>
